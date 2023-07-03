@@ -1,4 +1,5 @@
-import {View, Text, SafeAreaView, Image} from 'react-native';
+import { useState } from 'react';
+import {View, Text, SafeAreaView, Image, Pressable} from 'react-native';
 import colors from '../../theme/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -13,6 +14,28 @@ interface IFeedPost {
 }
 
 const FeedPost = ({post}: IFeedPost) => {
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const toggleDescriptionExpanded = () => {
+    setIsDescriptionExpanded ((v) => !v);
+    //setIsDescriptionExpanded(!isDescriptionExpanded);
+  };
+
+  const toggleLike = () => {
+    setIsLiked ((v) => !v);
+  };
+
+  let lastTap = 0;
+  const handleDoublePress = () => {
+    const now = Date.now();
+    if (now - lastTap  < 300) {
+      toggleLike();
+    }
+
+    lastTap = now;
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.post}>
@@ -34,20 +57,22 @@ const FeedPost = ({post}: IFeedPost) => {
         </View>
 
         {/* Content */}
-        <Image
-          source={{
-            uri: post.image,
-          }}
-          style={styles.image}
-        />
+        <Pressable onPress={handleDoublePress}>
+          <Image 
+            source={{
+              uri: post.image,
+            }}
+            style={styles.image}
+          />
+        </Pressable>
         {/* Footer */}
         <View style={styles.footer}>
           <View style={styles.iconContainer}>
-            <AntDesign
-              name={'hearto'}
+            <AntDesign onPress={toggleLike}
+              name={isLiked ? 'heart' : 'hearto'}
               size={24}
               style={styles.icon}
-              color={colors.black}
+              color={isLiked ? colors.accent : colors.black }
             />
             <Ionicons
               name="chatbubble-outline"
@@ -76,10 +101,11 @@ const FeedPost = ({post}: IFeedPost) => {
           </Text>
 
           {/* Post description */}
-          <Text style={styles.text}>
+          <Text style={styles.text} numberOfLines={isDescriptionExpanded ? 0 : 3}>
             <Text style={styles.bold}>{post.user.username}</Text>{' '}
             {post.description}
           </Text>
+          <Text style={{color: colors.grey}} onPress={toggleDescriptionExpanded}>{isDescriptionExpanded ? 'less' : 'more'}</Text>
 
           {/* Comments */}
           <Text style={{color: colors.grey}}>
