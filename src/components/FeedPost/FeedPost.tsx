@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {View, Text, SafeAreaView, Image, Pressable} from 'react-native';
+import {View, Text, SafeAreaView, Image} from 'react-native';
 import colors from '../../theme/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -31,16 +31,19 @@ const FeedPost = ({post}: IFeedPost) => {
   let content = null;
 
   if (post.image) {
-    content = (<Image
-      source={{
-        uri: post.image,
-      }}
-      style={styles.image}
-     />)
+    content = (
+      <DoublePressable onDoublePress={toggleLike}>
+        <Image
+          source={{
+            uri: post.image,
+          }}
+          style={styles.image}
+        />
+      </DoublePressable>
+    );
   } else if (post.images) {
-    content = (<Carousel images={post.images} />);
+    content = <Carousel images={post.images} onDoublePress={toggleLike} />;
   }
-
 
   return (
     <SafeAreaView style={styles.root}>
@@ -63,7 +66,7 @@ const FeedPost = ({post}: IFeedPost) => {
         </View>
 
         {/* Content */}
-        <DoublePressable onDoublePress={toggleLike}>{content}</DoublePressable>
+        {content}
 
         {/* Footer */}
         <View style={styles.footer}>
