@@ -4,7 +4,6 @@ import posts from '../../../src/assets/data/posts.json'
 
 const HomeScreen = () => {
 
-
   return (
       <FlatList
         data={posts}
