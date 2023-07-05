@@ -5,12 +5,12 @@ module.exports = {
     {useTransformReactJSXExperimental: true},
     ],
   ],
-  plugins: [
+  "plugins": [//"@babel/plugin-transform-react-jsx"],
     [
-      '@babel/plugins-transform-react-jsx',
+      '@babel/plugin-transform-react-jsx',
       {
         runtime: 'automatic',
       },
     ],
-  ],
+  ]
 };
