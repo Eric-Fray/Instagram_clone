@@ -1,13 +1,7 @@
-import {
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  ViewabilityConfig,
-  ViewToken,
-} from 'react-native';
+import {FlatList, ViewabilityConfig, ViewToken} from 'react-native';
 import FeedPost from '../../../src/components/FeedPost/';
 import posts from '../../../src/assets/data/posts.json';
-import {useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 const HomeScreen = () => {
   const [activePostId, setActivePostId] = useState<string | null>(null);
@@ -25,24 +19,16 @@ const HomeScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.root}>
-      <FlatList
-        data={posts}
-        renderItem={({item}) => (
-          <FeedPost post={item} isVisible={activePostId === item.id} />
-        )} // { item, index }
-        showsVerticalScrollIndicator={false}
-        viewabilityConfig={viewabilityConfig}
-        onViewableItemsChanged={onViewableItemsChanged.current}
-      />
-    </SafeAreaView>
+    <FlatList
+      data={posts}
+      renderItem={({item}) => (
+        <FeedPost post={item} isVisible={activePostId === item.id} />
+      )}
+      showsVerticalScrollIndicator={false}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={onViewableItemsChanged.current}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-});
 
 export default HomeScreen;

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, SafeAreaView, Image} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import colors from '../../theme/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -125,7 +125,7 @@ const FeedPost = ({post, isVisible}: IFeedPost) => {
           View all {post.nofComments} comments
         </Text>
         {post.comments.map(comment => (
-          <Comment key={comment.id} comment={comment} />
+          <Comment key={comment.id} comment={comment} includeDetails />
         ))}
 
         {/* Posted Date */}
