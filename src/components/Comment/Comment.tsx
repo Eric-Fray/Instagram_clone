@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     marginBottom: 10,
-
   },
   footerText: {
     marginRight: 10,

@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen/HomeScreen';
 import CommentsScreen from './src/screens/CommentsScreen/CommentsScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 import React from 'react';
 
 const App = () => {
@@ -17,7 +18,7 @@ const App = () => {
         enabled
         style={{flex: 1, justifyContent: 'flex-end'}}>
         <View style={styles.app}>
-          <CommentsScreen />
+          <ProfileScreen />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

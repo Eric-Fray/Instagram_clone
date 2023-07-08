@@ -14,8 +14,9 @@ import fonts from '../../theme/fonts';
 const Input = () => {
   const [newComment, setNewComment] = useState('New comment');
   const onPost = () => {
-    console.warn('Posting comment');
+    console.warn('Posting comment:', newComment);
     // sending the data to the backend
+    setNewComment('');
   };
   return (
     <View style={styles.root}>
@@ -27,9 +28,10 @@ const Input = () => {
       />
       <TextInput
         value={newComment}
-        onChangeText={(newText) => setNewComment(newText)}
+        onChangeText={setNewComment}
         placeholder="Write your comment..."
         style={styles.input}
+        multiline
       />
 
       <Text onPress={onPost} style={styles.button}>
@@ -47,6 +49,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderTopWidth: 1,
     borderColor: colors.border,
+    alignItems: 'flex-end',
   },
   image: {
     width: 40,
@@ -60,14 +63,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 25,
     paddingVertical: 5,
+    paddingRight: 50,
     paddingHorizontal: 10,
     marginLeft: 5,
+    alignSelf: 'center',
   },
   button: {
     position: 'absolute',
     right: 10,
-    top: 17,
+    bottom: 18,
     fontSize: fonts.size.sm,
     color: colors.primary,
+    alignSelf: 'center',
   },
 });
