@@ -9,6 +9,7 @@ import HomeScreen from './src/screens/HomeScreen/HomeScreen';
 import CommentsScreen from './src/screens/CommentsScreen/CommentsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import React from 'react';
+import EditProfileScreen from './src/screens/EditProfileScreen';
 
 const App = () => {
   return (
@@ -16,9 +17,9 @@ const App = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : null}
         enabled
-        style={{flex: 1, justifyContent: 'flex-end'}}>
+        style={{flex: 1}}>
         <View style={styles.app}>
-          <ProfileScreen />
+          <EditProfileScreen />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
