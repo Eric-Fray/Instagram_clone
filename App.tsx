@@ -10,6 +10,7 @@ import CommentsScreen from './src/screens/CommentsScreen/CommentsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import React from 'react';
 import EditProfileScreen from './src/screens/EditProfileScreen';
+import PostUploadScreen from './src/screens/PostUploadScreen';
 
 const App = () => {
   return (
@@ -19,7 +20,7 @@ const App = () => {
         enabled
         style={{flex: 1}}>
         <View style={styles.app}>
-          <EditProfileScreen />
+          <PostUploadScreen />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
