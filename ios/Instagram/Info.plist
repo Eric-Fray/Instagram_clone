@@ -37,6 +37,10 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This permission is required to add/change your profile picture.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This permission is required for Instagram to access your camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This permission is required for Instagram to access your camera</string>
 	
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string></string>
