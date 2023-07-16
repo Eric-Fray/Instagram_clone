@@ -8,7 +8,7 @@ const ProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
 
-  const {userId} = route.params;
+  const userId = route.params?.userId;
   // query the user with userID
 
   return (
