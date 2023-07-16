@@ -1,16 +1,18 @@
 import {
-  View,
   StyleSheet,
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import HomeScreen from './src/screens/HomeScreen/HomeScreen';
-import CommentsScreen from './src/screens/CommentsScreen/CommentsScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
 import React from 'react';
-import EditProfileScreen from './src/screens/EditProfileScreen';
-import PostUploadScreen from './src/screens/PostUploadScreen';
+import Navigation from './src/navigation';
+
+// import HomeScreen from './src/screens/HomeScreen/HomeScreen';
+// import CommentsScreen from './src/screens/CommentsScreen/CommentsScreen';
+// import ProfileScreen from './src/screens/ProfileScreen';
+// import EditProfileScreen from './src/screens/EditProfileScreen';
+// import PostUploadScreen from './src/screens/PostUploadScreen';
+// import {NavigationContainer} from '@react-navigation/native';
 
 const App = () => {
   return (
@@ -19,9 +21,7 @@ const App = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : null}
         enabled
         style={{flex: 1}}>
-        <View style={styles.app}>
-          <PostUploadScreen />
-        </View>
+        <Navigation />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
