@@ -18,7 +18,7 @@ const App = () => {
   return (
     <SafeAreaView style={styles.app}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         enabled
         style={{flex: 1}}>
         <Navigation />

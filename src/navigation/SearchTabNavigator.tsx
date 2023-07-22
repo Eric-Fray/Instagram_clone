@@ -9,7 +9,7 @@ const SearchTabNavigator = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="UserSearch" component={HomeScreen} />
-      <Tab.Screen name="UserSearch" component={CommentsScreen} />
+      <Tab.Screen name="PostSearch" component={CommentsScreen} />
     </Tab.Navigator>
   );
 };

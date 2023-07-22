@@ -36,6 +36,7 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({color, size}) => (
             <MaterialIcons name="search" size={size} color={color} />
           ),
+          headerShown: false,
         }}
       />
       <Tab.Screen
