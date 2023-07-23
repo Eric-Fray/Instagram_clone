@@ -6,13 +6,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import Navigation from './src/navigation';
+import { Amplify } from 'aws-amplify';
+import config from './src/aws-exports';
 
-// import HomeScreen from './src/screens/HomeScreen/HomeScreen';
-// import CommentsScreen from './src/screens/CommentsScreen/CommentsScreen';
-// import ProfileScreen from './src/screens/ProfileScreen';
-// import EditProfileScreen from './src/screens/EditProfileScreen';
-// import PostUploadScreen from './src/screens/PostUploadScreen';
-// import {NavigationContainer} from '@react-navigation/native';
+Amplify.configure(config);
 
 const App = () => {
   return (
