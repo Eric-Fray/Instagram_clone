@@ -10,7 +10,16 @@ import {Amplify} from 'aws-amplify';
 import config from './src/aws-exports';
 import AuthContextProvider from './src/Contexts/AuthContext';
 
-Amplify.configure(config);
+const updatedConfig = {
+  ...config,
+  oauth: {
+    ...config.oauth,
+    redirectSignIn: 'notjustphotos://',
+    redirectSignOut: 'notjustphotos://',
+  },
+};
+
+Amplify.configure(updatedConfig);
 
 const App = () => {
   return (
