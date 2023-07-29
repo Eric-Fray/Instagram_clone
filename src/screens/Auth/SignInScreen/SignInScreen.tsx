@@ -16,7 +16,6 @@ import {SignInNavigationProp} from '../../../types/navigation';
 import React from 'react-native';
 import {Auth} from 'aws-amplify';
 import {useState} from 'react';
-import {useAuthContext} from '../../../Contexts/AuthContext';
 
 type SignInData = {
   email: string;
@@ -27,7 +26,6 @@ const SignInScreen = () => {
   const {height} = useWindowDimensions();
   const navigation = useNavigation<SignInNavigationProp>();
   const [loading, setLoading] = useState(false);
-  const {setUser} = useAuthContext();
 
   const EMAIL_REGEX =
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -40,10 +38,7 @@ const SignInScreen = () => {
     }
     setLoading(true);
     try {
-      const cognitoUser = await Auth.signIn(email, password);
-
-      // TODO save user data in context
-      setUser(cognitoUser);
+      await Auth.signIn(email, password);
     } catch (e) {
       if ((e as Error).name === 'UserNotConfirmedException') {
         navigation.navigate('Confirm email', {email});
