@@ -3,10 +3,10 @@ import colors from '../../theme/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import React, {useState} from 'react';
 import fonts from '../../theme/fonts';
-import {IComment} from '../../types/models';
+import {Comment} from '../../API';
 
 interface ICommentProps {
-  comment: IComment;
+  comment: Comment;
   includeDetails?: boolean;
 }
 

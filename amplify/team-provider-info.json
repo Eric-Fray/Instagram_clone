@@ -21,6 +21,9 @@
           "deploymentBucketName": "amplify-instagram-staging-202457-deployment",
           "s3Key": "amplify-builds/InstagramPostConfirmation-42556541593777724c34-build.zip"
         }
+      },
+      "api": {
+        "Instagram": {}
       }
     }
   }

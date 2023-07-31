@@ -8,6 +8,38 @@ export const getLike = /* GraphQL */ `
       id
       userID
       postID
+      User {
+        id
+        name
+        email
+        username
+        bio
+        website
+        nofPosts
+        nofFollowers
+        nofFollowings
+        image
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      Post {
+        id
+        description
+        image
+        images
+        video
+        nofComments
+        nofLikes
+        userID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
       createdAt
       updatedAt
       _version
@@ -133,6 +165,38 @@ export const getComment = /* GraphQL */ `
       comment
       userID
       postID
+      User {
+        id
+        name
+        email
+        username
+        bio
+        website
+        nofPosts
+        nofFollowers
+        nofFollowings
+        image
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      Post {
+        id
+        description
+        image
+        images
+        video
+        nofComments
+        nofLikes
+        userID
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
       createdAt
       updatedAt
       _version
@@ -266,6 +330,23 @@ export const getPost = /* GraphQL */ `
       nofComments
       nofLikes
       userID
+      User {
+        id
+        name
+        email
+        username
+        bio
+        website
+        nofPosts
+        nofFollowers
+        nofFollowings
+        image
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
       Likes {
         nextToken
         startedAt
