@@ -2,7 +2,7 @@ import {FlatList, ViewabilityConfig, ViewToken} from 'react-native';
 import FeedPost from '../../../src/components/FeedPost/';
 import posts from '../../../src/assets/data/posts.json';
 import React, {useRef, useState, useEffect} from 'react';
-import {listPosts} from '../../graphql/queries';
+//import {listPosts} from '../../graphql/queries';
 import {API, graphqlOperation} from 'aws-amplify';
 
 export const listPosts = /* GraphQL */ `
@@ -39,6 +39,7 @@ export const listPosts = /* GraphQL */ `
             User {
               id
               name
+              username
             }
           }
         }
