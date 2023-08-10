@@ -9,6 +9,7 @@ import Navigation from './src/navigation';
 import {Amplify} from 'aws-amplify';
 import config from './src/aws-exports';
 import AuthContextProvider from './src/Contexts/AuthContext';
+import Client from './src/apollo/Client';
 
 const updatedConfig = {
   ...config,
@@ -29,7 +30,9 @@ const App = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           enabled
           style={{flex: 1}}>
-          <Navigation />
+          <Client>
+            <Navigation />
+          </Client>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </AuthContextProvider>

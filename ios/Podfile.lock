@@ -523,7 +523,7 @@ PODS:
     - React-Core
   - RNCPicker (2.4.10):
     - React-Core
-  - RNScreens (3.22.1):
+  - RNScreens (3.24.0):
     - React-Core
     - React-RCTImage
   - RNVectorIcons (9.2.0):
@@ -817,7 +817,7 @@ SPEC CHECKSUMS:
   RNAWSCognito: 5687577d12900389a893a9705ce31b6fa71c3805
   RNCAsyncStorage: f47fe18526970a69c34b548883e1aeceb115e3e1
   RNCPicker: 0bc2f0a29abcca7b7ed44a2d036aac9ab6d25700
-  RNScreens: 50ffe2fa2342eabb2d0afbe19f7c1af286bc7fb3
+  RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 65286bb6a07edce5e4fe8c90774da977ae8fc009

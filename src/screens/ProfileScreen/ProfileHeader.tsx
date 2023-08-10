@@ -42,10 +42,12 @@ const ProfileHeader = () => {
           <Button
             text="Edit Profile"
             onPress={() => navigation.navigate('Edit Profile')}
+            inline
           />
           <Button
             text="Sign Out"
             onPress={() => Auth.signOut()}
+            inline
           />
         </View>
       </View>
