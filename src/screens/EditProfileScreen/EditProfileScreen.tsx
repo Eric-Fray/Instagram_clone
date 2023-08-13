@@ -1,17 +1,7 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TextInput,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import {View, Text, Image, ActivityIndicator, Alert} from 'react-native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
-import {useForm, Control, Controller} from 'react-hook-form';
+import {useForm} from 'react-hook-form';
 import React, {useEffect, useState} from 'react';
-import colors from '../../theme/colors';
-import fonts from '../../theme/fonts';
 import {
   DeleteUserMutation,
   DeleteUserMutationVariables,
@@ -19,69 +9,21 @@ import {
   GetUserQueryVariables,
   UpdateUserMutation,
   UpdateUserMutationVariables,
-  User,
+  UsersByUsernameQuery,
+  UsersByUsernameQueryVariables,
 } from '../../API';
-import {deleteUser, getUser, updateUser} from './queries';
-import {useQuery, useMutation} from '@apollo/client';
+import {deleteUser, getUser, updateUser, usersByUsername} from './queries';
+import {useQuery, useMutation, useLazyQuery} from '@apollo/client';
 import {useAuthContext} from '../../Contexts/AuthContext';
 import ApiErrorMessage from '../../components/ApiErrorMessage';
-import Navigation from '../../navigation';
 import {useNavigation} from '@react-navigation/native';
-import { Auth } from 'aws-amplify';
+import {Auth} from 'aws-amplify';
+import styles from './styles';
+import CustomInput, {IEditableUser} from './CustomInput';
+import {DEFAULT_USER_IMAGE} from '../../config';
 
 const URL_REGEX =
   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-
-type IEditableUserField = 'name' | 'username' | 'website' | 'bio';
-type IEditableUser = Pick<User, IEditableUserField>;
-
-interface ICustomInput {
-  control: Control<IEditableUser, object>;
-  label: string;
-  name: IEditableUserField;
-  multiline?: boolean;
-  rules?: object;
-}
-
-const CustomInput = ({
-  control,
-  label,
-  name,
-  multiline = false,
-  rules = {},
-}: ICustomInput) => (
-  <Controller
-    control={control}
-    name={name}
-    rules={rules}
-    render={({field: {onChange, value, onBlur}, fieldState: {error}}) => {
-      return (
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>{label}</Text>
-          <View style={{flex: 1}}>
-            <TextInput
-              value={value || ''}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder={label}
-              multiline={multiline}
-              style={[
-                styles.input,
-                {borderColor: error ? colors.error : colors.border},
-              ]}
-              autoCapitalize="none"
-            />
-            {error && (
-              <Text style={{color: colors.error}}>
-                {error.message || 'Required'}
-              </Text>
-            )}
-          </View>
-        </View>
-      );
-    }}
-  />
-);
 
 const EditProfileScreen = () => {
   const [selectedPhoto, setSelectedPhoto] = useState<null | Asset>(null);
@@ -95,6 +37,11 @@ const EditProfileScreen = () => {
     {variables: {id: userId}, errorPolicy: 'all'},
   );
   const user = data?.getUser;
+
+  const [getUsersByUsername] = useLazyQuery<
+    UsersByUsernameQuery,
+    UsersByUsernameQueryVariables
+  >(usersByUsername, {errorPolicy: 'all'});
 
   const [
     doUpdateUser,
@@ -152,7 +99,7 @@ const EditProfileScreen = () => {
         console.log(err);
       }
       Auth.signOut();
-    })
+    });
   };
 
   const onChangePhoto = () => {
@@ -164,6 +111,13 @@ const EditProfileScreen = () => {
         }
       },
     );
+  };
+
+  const validateUsername = (username: string) => {
+    // query the database based on usersByUsername
+
+    // if username returns then return error
+    return 'Username is already taken';
   };
 
   if (loading) {
@@ -182,7 +136,7 @@ const EditProfileScreen = () => {
   return (
     <View style={styles.page}>
       <Image
-        source={{uri: selectedPhoto?.uri || user?.image}}
+        source={{uri: selectedPhoto?.uri || user?.image || DEFAULT_USER_IMAGE}}
         style={styles.avatar}
       />
       <Text onPress={onChangePhoto} style={styles.textButton}>
@@ -204,6 +158,7 @@ const EditProfileScreen = () => {
             value: 3,
             message: 'Username should be at least 3 characters.',
           },
+          validate: validateUsername,
         }}
         label="Username"
       />
@@ -242,43 +197,5 @@ const EditProfileScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  page: {
-    alignItems: 'center',
-    padding: 10,
-  },
-  avatar: {
-    width: '30%',
-    aspectRatio: 1,
-    borderRadius: 100,
-  },
-  textButton: {
-    color: colors.primary,
-    fontSize: fonts.size.md,
-    fontWeight: fonts.weight.semi,
-    margin: 10,
-  },
-  textButtonDanger: {
-    color: colors.accent,
-    fontSize: fonts.size.md,
-    fontWeight: fonts.weight.semi,
-    margin: 10,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    padding: 10,
-  },
-  label: {
-    width: 75,
-    color: colors.grey,
-  },
-  input: {
-    borderBottomWidth: 1,
-    height: 50,
-  },
-});
 
 export default EditProfileScreen;
