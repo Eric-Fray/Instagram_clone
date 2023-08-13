@@ -1,12 +1,33 @@
-import {View, Text, StyleSheet, Image, TextInput} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import {useForm, Control, Controller} from 'react-hook-form';
-import React, {useState} from 'react';
-import user from '../../assets/data/user.json';
+import React, {useEffect, useState} from 'react';
 import colors from '../../theme/colors';
 import fonts from '../../theme/fonts';
-;
-import {User} from '../../API';
+import {
+  DeleteUserMutation,
+  DeleteUserMutationVariables,
+  GetUserQuery,
+  GetUserQueryVariables,
+  UpdateUserMutation,
+  UpdateUserMutationVariables,
+  User,
+} from '../../API';
+import {deleteUser, getUser, updateUser} from './queries';
+import {useQuery, useMutation} from '@apollo/client';
+import {useAuthContext} from '../../Contexts/AuthContext';
+import ApiErrorMessage from '../../components/ApiErrorMessage';
+import Navigation from '../../navigation';
+import {useNavigation} from '@react-navigation/native';
+import { Auth } from 'aws-amplify';
 
 const URL_REGEX =
   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
@@ -64,17 +85,74 @@ const CustomInput = ({
 
 const EditProfileScreen = () => {
   const [selectedPhoto, setSelectedPhoto] = useState<null | Asset>(null);
-  const {control, handleSubmit} = useForm<IEditableUser>({
-    defaultValues: {
-      name: user.name,
-      username: user.username,
-      website: user.website,
-      bio: user.bio,
-    },
+  const {control, handleSubmit, setValue} = useForm<IEditableUser>();
+  const navigation = useNavigation();
+
+  const {userId, user: authUser} = useAuthContext();
+
+  const {data, loading, error} = useQuery<GetUserQuery, GetUserQueryVariables>(
+    getUser,
+    {variables: {id: userId}, errorPolicy: 'all'},
+  );
+  const user = data?.getUser;
+
+  const [
+    doUpdateUser,
+    {data: updateData, loading: updateLoading, error: updateError},
+  ] = useMutation<UpdateUserMutation, UpdateUserMutationVariables>(updateUser, {
+    errorPolicy: 'all',
   });
 
-  const onSubmit = (data: IEditableUser) => {
-    console.warn('submit', data);
+  const [doDelete, {loading: deleteLoading, error: deleteError}] = useMutation<
+    DeleteUserMutation,
+    DeleteUserMutationVariables
+  >(deleteUser, {errorPolicy: 'all'});
+
+  useEffect(() => {
+    if (user) {
+      setValue('name', user.name);
+      setValue('username', user.username);
+      setValue('bio', user.bio);
+      setValue('website', user.website);
+    }
+  }, [user, setValue]);
+
+  const onSubmit = async (formData: IEditableUser) => {
+    await doUpdateUser({
+      variables: {input: {id: userId, ...formData, _version: user?._version}},
+    });
+    navigation.goBack();
+  };
+
+  const confirmDelete = () => {
+    Alert.alert('Are you sure?', 'Deleting your profile is permanent', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes, delete',
+        style: 'destructive',
+        onPress: startDeleting,
+      },
+    ]);
+  };
+
+  const startDeleting = async () => {
+    if (!user) {
+      return;
+    }
+    //delete from db
+    await doDelete({
+      variables: {input: {id: userId, _version: user?._version}},
+    });
+    //delete from Cognito
+    await authUser?.deleteUser(err => {
+      if (err) {
+        console.log(err);
+      }
+      Auth.signOut();
+    })
   };
 
   const onChangePhoto = () => {
@@ -88,10 +166,23 @@ const EditProfileScreen = () => {
     );
   };
 
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error || updateError || deleteError) {
+    return (
+      <ApiErrorMessage
+        title="Profile error"
+        message={error?.message || updateError?.message}
+      />
+    );
+  }
+
   return (
     <View style={styles.page}>
       <Image
-        source={{uri: selectedPhoto?.uri || user.image}}
+        source={{uri: selectedPhoto?.uri || user?.image}}
         style={styles.avatar}
       />
       <Text onPress={onChangePhoto} style={styles.textButton}>
@@ -120,7 +211,6 @@ const EditProfileScreen = () => {
         name="website"
         control={control}
         rules={{
-          required: 'Website is required',
           pattern: {
             value: URL_REGEX,
             message: 'Invalid url.',
@@ -142,7 +232,12 @@ const EditProfileScreen = () => {
       />
 
       <Text onPress={handleSubmit(onSubmit)} style={styles.textButton}>
-        Submit
+        {updateLoading ? 'Submitting...' : 'Submit'}
+      </Text>
+      <Text
+        onPress={handleSubmit(confirmDelete)}
+        style={styles.textButtonDanger}>
+        {deleteLoading ? 'Deleting...' : 'DELETE USER'}
       </Text>
     </View>
   );
@@ -162,7 +257,12 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: fonts.size.md,
     fontWeight: fonts.weight.semi,
-
+    margin: 10,
+  },
+  textButtonDanger: {
+    color: colors.accent,
+    fontSize: fonts.size.md,
+    fontWeight: fonts.weight.semi,
     margin: 10,
   },
   inputContainer: {
@@ -177,6 +277,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderBottomWidth: 1,
+    height: 50,
   },
 });
 

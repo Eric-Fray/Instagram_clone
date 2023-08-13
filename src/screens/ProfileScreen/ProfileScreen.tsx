@@ -33,8 +33,6 @@ const ProfileScreen = () => {
 
   const user = data?.getUser;
 
-  console.warn(loading, error, data);
-
   if (loading) {
     return <ActivityIndicator />;
   }
