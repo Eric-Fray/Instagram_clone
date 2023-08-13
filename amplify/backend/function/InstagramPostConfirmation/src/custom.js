@@ -1,22 +1,21 @@
 /**
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
-
 const AWS = require('aws-sdk');
-const doccClient = new AWS.DynamoDB.DocumentCliebt();
+const docClient = new AWS.DynamoDB.DocumentClient();
 
-//TableName = 'User-whl3dmuxeffufmt6dcgokxq6my-staging'; Tablename-AppsyncID-environment
 const env = process.env.ENV;
 const AppsyncID = process.env.API_INSTAGRAM_GRAPHQLAPIIDOUTPUT;
-TableName = 'User-${AppsyncID}-${env}';
+const TableName = `User-${AppsyncID}-${env}`; // TableName-AppsyncID-env
 
 const userExists = async id => {
   const params = {
     TableName,
     Key: id,
   };
+
   try {
-    const response = await doccClient.get(params).promise();
+    const response = await docClient.get(params).promise();
     return !!response?.Item;
   } catch (e) {
     return false;
@@ -25,9 +24,10 @@ const userExists = async id => {
 
 const saveUser = async user => {
   const date = new Date();
-  const dataStr = date.toISOString();
+  const dateStr = date.toISOString();
   const timestamp = date.getTime();
-  const item = {
+
+  const Item = {
     ...user,
     __typename: 'User',
     createdAt: dateStr,
@@ -39,33 +39,41 @@ const saveUser = async user => {
     TableName,
     Item,
   };
+
   try {
-    await doccClient.put(params).promise();
+    await docClient.put(params).promise();
   } catch (e) {
     console.log(e);
   }
 };
 
 exports.handler = async (event, context) => {
-  console.warn("We've got lambda");
+  console.log('Heyy, Lambda function is working');
+  console.log(event);
 
   if (!event?.request?.userAttributes) {
-    console.warn('No user data');
+    console.log('No user data available');
     return;
   }
 
-  const {sub, name, email} = event.request.userAttributes; // {sub, user, emaail}
+  const {sub, name, email} = event.request.userAttributes; // {sub, email, name}
 
   const newUser = {
     id: sub,
     name,
     email,
+    nofPosts: 0,
+    nofFollowers: 0,
+    nofFollowings: 0,
   };
 
-  // check if user exists
-  if (!userExists(newUser.id)) {
-    // if not, save the user
-    saveUser(newUser);
+  // check if the user already exists
+  if (!(await userExists(newUser.id))) {
+    // if not, save the user to database.
+    await saveUser(newUser);
+    console.log(`User ${newUser.id} has been saved to the database`);
+  } else {
+    console.log(`User ${newUser.id} already exists`);
   }
 
   return event;
