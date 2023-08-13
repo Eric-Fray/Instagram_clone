@@ -17,7 +17,7 @@ const HomeScreen = () => {
   const {data, loading, error} = useQuery<
     ListPostsQuery,
     ListPostsQueryVariables
-  >(listPosts);
+  >(listPosts, {errorPolicy: 'all'});
 
   const viewabilityConfig: ViewabilityConfig = {
     itemVisiblePercentThreshold: 51,
