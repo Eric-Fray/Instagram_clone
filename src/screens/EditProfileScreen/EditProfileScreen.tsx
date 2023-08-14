@@ -45,7 +45,7 @@ const EditProfileScreen = () => {
 
   const [
     doUpdateUser,
-    {data: updateData, loading: updateLoading, error: updateError},
+    {loading: updateLoading, error: updateError},
   ] = useMutation<UpdateUserMutation, UpdateUserMutationVariables>(updateUser, {
     errorPolicy: 'all',
   });
@@ -68,7 +68,9 @@ const EditProfileScreen = () => {
     await doUpdateUser({
       variables: {input: {id: userId, ...formData, _version: user?._version}},
     });
+    if (navigation.canGoBack()){
     navigation.goBack();
+    }
   };
 
   const confirmDelete = () => {
@@ -113,11 +115,23 @@ const EditProfileScreen = () => {
     );
   };
 
-  const validateUsername = (username: string) => {
+  const validateUsername = async (username: string) => {
     // query the database based on usersByUsername
-
-    // if username returns then return error
-    return 'Username is already taken';
+    try {
+    const response = await getUsersByUsername({variables: {username}});
+    if (response.error) {
+      Alert.alert('Query to verify username failed');
+      return 'Failed to verify username'
+    }
+    const users = response.data?.usersByUsername?.items;
+    if (users && users?.length > 0 && users?.[0]?.id !== userId) {
+      return 'Username is already taken';
+    }
+    } catch(e) {
+      Alert.alert('Query to verify username failed');
+    }
+    // if username isn't taken, return true
+    return true;
   };
 
   if (loading) {

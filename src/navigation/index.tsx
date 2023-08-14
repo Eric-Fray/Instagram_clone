@@ -7,6 +7,11 @@ import {RootNavigatorParamList} from '../types/navigation';
 import AuthStackNavigator from './AuthStackNavigator';
 import {useAuthContext} from '../Contexts/AuthContext';
 import {ActivityIndicator, View} from 'react-native';
+import {GetUserQuery, GetUserQueryVariables} from '../API';
+import {getUser} from './queries';
+import {useQuery} from '@apollo/client';
+import ApiErrorMessage from '../components/ApiErrorMessage';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 const Stack = createNativeStackNavigator<RootNavigatorParamList>(); // { Navigator, Screen }
 
@@ -32,36 +37,59 @@ const linking: LinkingOptions<RootNavigatorParamList> = {
 };
 
 const Navigation = () => {
-  const {user} = useAuthContext();
+  const {user, userId} = useAuthContext();
+  const {data, loading, error} = useQuery<GetUserQuery, GetUserQueryVariables>(
+    getUser,
+    {variables: {id: userId}, errorPolicy: 'all'},
+  );
 
-  if (user === undefined) {
-    return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size="large"/>
-    </View>
-    )
+  const userData = data?.getUser;
+
+  if (error) {
+    <ApiErrorMessage title="Could not fetch user" message={error.message} />;
   }
+
+  if (user === undefined || loading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  let stackScreens = null;
+  if (!user) {
+    stackScreens = (
+      <Stack.Screen
+        name="Auth"
+        component={AuthStackNavigator}
+        options={{headerShown: false}}
+      />
+    );
+  } else if (!userData?.username) {
+    stackScreens = (
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{title: 'Setup Profile'}}
+      />
+    );
+  } else {
+    stackScreens = (
+      <>
+        <Stack.Screen
+          name="Home"
+          component={BottomTabNavigator}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen name="Comments" component={CommentsScreen} />
+      </>
+    );
+  }
+
   return (
     <NavigationContainer linking={linking}>
-      <Stack.Navigator
-        initialRouteName="Auth"
-        screenOptions={{headerShown: true}}>
-        {!user ? (
-          <Stack.Screen
-            name="Auth"
-            component={AuthStackNavigator}
-            options={{headerShown: false}}
-          />
-        ) : (
-          <>
-            <Stack.Screen
-              name="Home"
-              component={BottomTabNavigator}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen name="Comments" component={CommentsScreen} />
-          </>
-        )}
+      <Stack.Navigator screenOptions={{headerShown: true}}>
+        {stackScreens}
       </Stack.Navigator>
     </NavigationContainer>
   );
