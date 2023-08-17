@@ -10,6 +10,8 @@ import {
   VideoQuality,
 } from 'expo-camera';
 import colors from '../../theme/colors';
+import {useNavigation} from '@react-navigation/native';
+import {CameraNavigationProp} from '../../types/navigation';
 
 const flashModes = [
   FlashMode.off,
@@ -25,13 +27,14 @@ const flashModeToIcon = {
   [FlashMode.torch]: 'highlight',
 };
 
-const PostUploadScreen = () => {
+const CameraScreen = () => {
   const [cameraType, setCameraType] = useState(CameraType.back);
   const [flash, setFlash] = useState(FlashMode.off);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
 
   const camera = useRef<Camera>(null);
+  const navigation = useNavigation<CameraNavigationProp>();
   // // In the case of android
 
   //   const [hasPermissions, setHasPermissions] = useState<boolean | null>(null);
@@ -112,6 +115,16 @@ const PostUploadScreen = () => {
     }
   };
 
+  const navigateToCreateScreen = () => {
+    navigation.navigate('Create', {
+      images: [
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/1.jpg',
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/2.jpg',
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/3.jpg',
+      ],
+    });
+  };
+
   return (
     <View style={styles.page}>
       <Camera
@@ -154,6 +167,12 @@ const PostUploadScreen = () => {
           size={30}
           color={colors.white}
         />
+        <MaterialIcons
+          onPress={navigateToCreateScreen}
+          name="arrow-forward-ios"
+          size={30}
+          color={colors.white}
+        />
       </View>
     </View>
   );
@@ -167,15 +186,15 @@ const styles = StyleSheet.create({
   },
   camera: {
     width: '100%',
-    aspectRation: 3 / 4,
-    backgroundColor: colors.black,
+    aspectRatio: 3 / 4,
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    wdith: '100%',
-    //position: '',
+    width: '100%',
+
+    position: 'absolute',
   },
   circle: {
     width: 75,
@@ -185,4 +204,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PostUploadScreen;
+export default CameraScreen;

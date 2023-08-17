@@ -13,7 +13,7 @@ import {getUser} from './queries';
 import {ActivityIndicator} from 'react-native';
 import ApiErrorMessage from '../../components/ApiErrorMessage';
 import {GetUserQuery, GetUserQueryVariables} from '../../API';
-import { useAuthContext } from '../../Contexts/AuthContext';
+import {useAuthContext} from '../../Contexts/AuthContext';
 
 const ProfileScreen = () => {
   const route = useRoute<UserProfileRouteProp | MyProfileRouteProp>();
@@ -26,10 +26,10 @@ const ProfileScreen = () => {
   const userId = route.params?.userId || authUserId;
   // query the user with userID
 
-  const {data, loading, error, refetch} = useQuery<GetUserQuery, GetUserQueryVariables>(
-    getUser,
-    {errorPolicy: 'all', variables: {id: userId}},
-  );
+  const {data, loading, error, refetch} = useQuery<
+    GetUserQuery,
+    GetUserQueryVariables
+  >(getUser, {errorPolicy: 'all', variables: {id: userId}});
 
   const user = data?.getUser;
 

@@ -10,6 +10,7 @@ import {Amplify} from 'aws-amplify';
 import config from './src/aws-exports';
 import AuthContextProvider from './src/Contexts/AuthContext';
 import Client from './src/apollo/Client';
+import {MenuProvider} from 'react-native-popup-menu';
 
 const updatedConfig = {
   ...config,
@@ -26,14 +27,16 @@ const App = () => {
   return (
     <AuthContextProvider>
       <SafeAreaView style={styles.app}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          enabled
-          style={{flex: 1}}>
-          <Client>
-            <Navigation />
-          </Client>
-        </KeyboardAvoidingView>
+        <MenuProvider>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            enabled
+            style={{flex: 1}}>
+            <Client>
+              <Navigation />
+            </Client>
+          </KeyboardAvoidingView>
+        </MenuProvider>
       </SafeAreaView>
     </AuthContextProvider>
   );

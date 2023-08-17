@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   FlatList,
-  Text,
   ViewabilityConfig,
   ViewToken,
 } from 'react-native';
@@ -14,7 +13,7 @@ import ApiErrorMessage from '../../components/ApiErrorMessage/ApiErrorMessage';
 
 const HomeScreen = () => {
   const [activePostId, setActivePostId] = useState<string | null>(null);
-  const {data, loading, error} = useQuery<
+  const {data, loading, error, refetch} = useQuery<
     ListPostsQuery,
     ListPostsQueryVariables
   >(listPosts, {errorPolicy: 'all'});
@@ -56,6 +55,8 @@ const HomeScreen = () => {
       showsVerticalScrollIndicator={false}
       viewabilityConfig={viewabilityConfig}
       onViewableItemsChanged={onViewableItemsChanged.current}
+      onRefresh={refetch}
+      refreshing={loading}
     />
   );
 };

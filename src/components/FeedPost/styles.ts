@@ -46,4 +46,15 @@ export default StyleSheet.create({
     bold: {
       fontWeight: fonts.weight.bold,
     },
+    optionText: {
+      textAlign: 'center',
+      fontSize: 20,
+      padding: 10,
+    },
+    optionDelete: {
+      textAlign: 'center',
+      fontSize: 20,
+      padding: 10,
+      color: 'red',
+    }
   });

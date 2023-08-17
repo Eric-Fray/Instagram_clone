@@ -1,8 +1,6 @@
 import React, {
   createContext,
-  Dispatch,
   ReactNode,
-  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -55,7 +53,7 @@ const AuthContextProvider = ({children}: {children: ReactNode}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{user, userId: user?.attributes?.sub}}>
+    <AuthContext.Provider value={{user, userId: user?.attributes.sub}}>
       {children}
     </AuthContext.Provider>
   );

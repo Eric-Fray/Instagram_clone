@@ -6,7 +6,7 @@ import colors from '../../theme/colors';
 
 interface IVideoPlayer {
   uri: string;
-  paused: boolean;
+  paused?: boolean;
 }
 
 const VideoPlayer = ({uri, paused}: IVideoPlayer) => {
