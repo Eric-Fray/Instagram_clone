@@ -9,10 +9,36 @@ import {
 } from 'react-native-popup-menu';
 import Entypo from 'react-native-vector-icons/Entypo';
 import styles from './styles';
+import {useMutation} from '@apollo/client';
+import {deletePost} from './queries';
+import { DeletePostMutation, DeletePostMutationVariables, Post } from '../../API';
 
+interface IPostMenu {
+  post: Post,
+}
 
-const PostMenu = () => {
-  const onDeleteOptionPressed = () => {};
+const PostMenu = ({post}: IPostMenu) => {
+  
+  const [doDeletePost] = useMutation<
+  DeletePostMutation, 
+  DeletePostMutationVariables
+  >(deletePost), {variables: {input: {id: post.id, _version: post._version}}};
+  const startDeletingPost = () => {
+
+  };
+  const onDeleteOptionPressed = () => {
+    Alert.alert("Are you sure?", "Deleting a post is permanent", [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete post',
+        style: 'destructive',
+        onPress: startDeletingPost,
+      }
+    ])
+  };
   const onEditOptionPressed = () => {};
   return (
     <Menu renderer={renderers.SlideInMenu} style={styles.threeDots}>
