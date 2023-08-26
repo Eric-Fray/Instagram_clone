@@ -80,7 +80,6 @@ export const deleteLike = gql`
     }
   }
 `;
-
 export const updatePost = gql`
   mutation UpdatePost(
     $input: UpdatePostInput!

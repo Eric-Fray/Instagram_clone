@@ -2,10 +2,7 @@ import {View, Text, Image, TextInput, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
 import colors from '../../theme/colors';
 import fonts from '../../theme/fonts';
-import {useMutation} from '@apollo/client';
-import {CreateCommentMutation, CreateCommentMutationVariables} from '../../API';
-import {createComment} from './queries';
-import { useAuthContext } from '../../Contexts/AuthContext';
+import useCommentsService from '../../services/CommentsService';
 
 interface IInput {
   postId: string;
@@ -13,20 +10,10 @@ interface IInput {
 
 const Input = ({postId}: IInput) => {
   const [newComment, setNewComment] = useState('New comment');
-  const {userId} = useAuthContext();
+  const {onCreateComment} = useCommentsService(postId);
 
-  const [doCreateComment] = useMutation<
-    CreateCommentMutation,
-    CreateCommentMutationVariables
-  >(createComment);
-
-  const onPost = () => {
-    doCreateComment({variables: {input: {
-      postID: postId,
-      userID: userId,
-      comment: newComment,
-    }}})
-
+  const onPost = async () => {
+    onCreateComment(newComment);
     setNewComment('');
   };
   return (
