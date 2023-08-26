@@ -1,21 +1,32 @@
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import {View, Text, Image, TextInput, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
 import colors from '../../theme/colors';
 import fonts from '../../theme/fonts';
+import {useMutation} from '@apollo/client';
+import {CreateCommentMutation, CreateCommentMutationVariables} from '../../API';
+import {createComment} from './queries';
+import { useAuthContext } from '../../Contexts/AuthContext';
 
-const Input = () => {
+interface IInput {
+  postId: string;
+}
+
+const Input = ({postId}: IInput) => {
   const [newComment, setNewComment] = useState('New comment');
+  const {userId} = useAuthContext();
+
+  const [doCreateComment] = useMutation<
+    CreateCommentMutation,
+    CreateCommentMutationVariables
+  >(createComment);
+
   const onPost = () => {
-    console.warn('Posting comment:', newComment);
-    // sending the data to the backend
+    doCreateComment({variables: {input: {
+      postID: postId,
+      userID: userId,
+      comment: newComment,
+    }}})
+
     setNewComment('');
   };
   return (

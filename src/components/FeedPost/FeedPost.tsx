@@ -11,9 +11,7 @@ import Carousel from '../Carousel/Carousel';
 import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import {useNavigation} from '@react-navigation/native';
 import {FeedNavigationProp} from '../../types/navigation';
-import {
-  Post,
-} from '../../API';
+import {Post} from '../../API';
 import {DEFAULT_USER_IMAGE} from '../../config';
 import PostMenu from './PostMenu';
 import useLikeService from '../../services/LikeService';
@@ -128,10 +126,12 @@ const FeedPost = (props: IFeedPost) => {
           <Text style={styles.text} onPress={navigatetoLikes}>
             Liked by{' '}
             <Text style={styles.bold}>{postLikes[0]?.User?.username}</Text>
-            {postLikes.length > 1 && (<>
-            {' '}
-            and <Text style={styles.bold}>{post.nofLikes - 1} others</Text>
-            </>)} 
+            {postLikes.length > 1 && (
+              <>
+                {' '}
+                and <Text style={styles.bold}>{post.nofLikes - 1} others</Text>
+              </>
+            )}
           </Text>
         )}
         {/* Post description */}
