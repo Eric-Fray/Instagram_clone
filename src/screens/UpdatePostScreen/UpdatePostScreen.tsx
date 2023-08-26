@@ -34,7 +34,7 @@ const UpdatePostScreen = () => {
   const {id} = route.params;
   const {loading, data, error} = useQuery<GetPostQuery, GetPostQueryVariables>(
     getPost,
-    {variables: {id}},
+    {variables: {id}, errorPolicy: 'all'},
   );
 
   const post = data?.getPost;
