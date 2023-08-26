@@ -11,18 +11,24 @@ import Carousel from '../Carousel/Carousel';
 import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import {useNavigation} from '@react-navigation/native';
 import {FeedNavigationProp} from '../../types/navigation';
-import {Post} from '../../API';
+import {
+  Post,
+} from '../../API';
 import {DEFAULT_USER_IMAGE} from '../../config';
 import PostMenu from './PostMenu';
+import useLikeService from '../../services/LikeService';
 
 interface IFeedPost {
   post: Post;
   isVisible: boolean;
 }
 
-const FeedPost = ({post, isVisible}: IFeedPost) => {
+const FeedPost = (props: IFeedPost) => {
+  const {post, isVisible = false} = props;
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const {toggleLike, isLiked} = useLikeService(post);
+
+  const postLikes = post.Likes?.items.filter(like => !like?._deleted) || [];
 
   const navigation = useNavigation<FeedNavigationProp>();
 
@@ -36,17 +42,16 @@ const FeedPost = ({post, isVisible}: IFeedPost) => {
     navigation.navigate('Comments', {postId: post.id});
   };
 
+  const navigatetoLikes = () => {
+    navigation.navigate('PostLikes', {id: post.id});
+  };
+
   const toggleDescriptionExpanded = () => {
     setIsDescriptionExpanded(v => !v);
     //setIsDescriptionExpanded(!isDescriptionExpanded);
   };
 
-  const toggleLike = () => {
-    setIsLiked(v => !v);
-  };
-
-  let content = null;
-
+  let content;
   if (post.image) {
     content = (
       <DoublePressable onDoublePress={toggleLike}>
@@ -116,13 +121,19 @@ const FeedPost = ({post, isVisible}: IFeedPost) => {
             color={colors.black}
           />
         </View>
-
         {/* Likes */}
-        <Text style={styles.text}>
-          Liked by <Text style={styles.bold}>blahblah</Text> and{' '}
-          <Text style={styles.bold}>{post.nofLikes} others</Text>
-        </Text>
-
+        {postLikes.length === 0 ? (
+          <Text>Be the first to like this post</Text>
+        ) : (
+          <Text style={styles.text} onPress={navigatetoLikes}>
+            Liked by{' '}
+            <Text style={styles.bold}>{postLikes[0]?.User?.username}</Text>
+            {postLikes.length > 1 && (<>
+            {' '}
+            and <Text style={styles.bold}>{post.nofLikes - 1} others</Text>
+            </>)} 
+          </Text>
+        )}
         {/* Post description */}
         <Text style={styles.text} numberOfLines={isDescriptionExpanded ? 0 : 3}>
           <Text style={styles.bold}>{post.User?.username}</Text>{' '}
@@ -131,7 +142,6 @@ const FeedPost = ({post, isVisible}: IFeedPost) => {
         <Text style={{color: colors.grey}} onPress={toggleDescriptionExpanded}>
           {isDescriptionExpanded ? 'less' : 'more'}
         </Text>
-
         {/* Comments */}
         <Text onPress={navigateToComments} style={{color: colors.grey}}>
           View all {post.nofComments} comments
@@ -142,7 +152,6 @@ const FeedPost = ({post, isVisible}: IFeedPost) => {
               <Comment key={comment.id} comment={comment} includeDetails />
             ),
         )}
-
         {/* Posted Date */}
         <Text style={{color: colors.grey}}>{post.createdAt}</Text>
       </View>
