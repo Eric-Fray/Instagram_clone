@@ -137,12 +137,12 @@ export type ModelCommentConnection = {
 export type Comment = {
   __typename: "Comment",
   id: string,
+  createdAt: string,
   comment: string,
   userID: string,
   postID: string,
   User?: User | null,
   Post?: Post | null,
-  createdAt: string,
   updatedAt: string,
   _version: number,
   _deleted?: boolean | null,
@@ -163,6 +163,7 @@ export type DeleteLikeInput = {
 
 export type CreateCommentInput = {
   id?: string | null,
+  createdAt?: string | null,
   comment: string,
   userID: string,
   postID: string,
@@ -170,6 +171,7 @@ export type CreateCommentInput = {
 };
 
 export type ModelCommentConditionInput = {
+  createdAt?: ModelStringInput | null,
   comment?: ModelStringInput | null,
   userID?: ModelIDInput | null,
   postID?: ModelIDInput | null,
@@ -196,6 +198,7 @@ export type ModelStringInput = {
 
 export type UpdateCommentInput = {
   id: string,
+  createdAt?: string | null,
   comment?: string | null,
   userID?: string | null,
   postID?: string | null,
@@ -336,12 +339,23 @@ export type ModelIDKeyConditionInput = {
 
 export type ModelCommentFilterInput = {
   id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
   comment?: ModelStringInput | null,
   userID?: ModelIDInput | null,
   postID?: ModelIDInput | null,
   and?: Array< ModelCommentFilterInput | null > | null,
   or?: Array< ModelCommentFilterInput | null > | null,
   not?: ModelCommentFilterInput | null,
+};
+
+export type ModelStringKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
 };
 
 export type ModelPostFilterInput = {
@@ -406,6 +420,7 @@ export type ModelSubscriptionIDInput = {
 
 export type ModelSubscriptionCommentFilterInput = {
   id?: ModelSubscriptionIDInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
   comment?: ModelSubscriptionStringInput | null,
   userID?: ModelSubscriptionIDInput | null,
   postID?: ModelSubscriptionIDInput | null,
@@ -765,6 +780,7 @@ export type CreateCommentMutation = {
   createComment?:  {
     __typename: "Comment",
     id: string,
+    createdAt: string,
     comment: string,
     userID: string,
     postID: string,
@@ -845,7 +861,6 @@ export type CreateCommentMutation = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
     } | null,
-    createdAt: string,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -862,6 +877,7 @@ export type UpdateCommentMutation = {
   updateComment?:  {
     __typename: "Comment",
     id: string,
+    createdAt: string,
     comment: string,
     userID: string,
     postID: string,
@@ -942,7 +958,6 @@ export type UpdateCommentMutation = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
     } | null,
-    createdAt: string,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -959,6 +974,7 @@ export type DeleteCommentMutation = {
   deleteComment?:  {
     __typename: "Comment",
     id: string,
+    createdAt: string,
     comment: string,
     userID: string,
     postID: string,
@@ -1039,7 +1055,6 @@ export type DeleteCommentMutation = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
     } | null,
-    createdAt: string,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -1117,10 +1132,10 @@ export type CreatePostMutation = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -1207,10 +1222,10 @@ export type UpdatePostMutation = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -1297,10 +1312,10 @@ export type DeletePostMutation = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -1361,10 +1376,10 @@ export type CreateUserMutation = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -1441,10 +1456,10 @@ export type UpdateUserMutation = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -1521,10 +1536,10 @@ export type DeleteUserMutation = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -1902,6 +1917,7 @@ export type GetCommentQuery = {
   getComment?:  {
     __typename: "Comment",
     id: string,
+    createdAt: string,
     comment: string,
     userID: string,
     postID: string,
@@ -1982,7 +1998,6 @@ export type GetCommentQuery = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
     } | null,
-    createdAt: string,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -2002,6 +2017,7 @@ export type ListCommentsQuery = {
     items:  Array< {
       __typename: "Comment",
       id: string,
+      createdAt: string,
       comment: string,
       userID: string,
       postID: string,
@@ -2039,7 +2055,6 @@ export type ListCommentsQuery = {
         _deleted?: boolean | null,
         _lastChangedAt: number,
       } | null,
-      createdAt: string,
       updatedAt: string,
       _version: number,
       _deleted?: boolean | null,
@@ -2063,6 +2078,7 @@ export type SyncCommentsQuery = {
     items:  Array< {
       __typename: "Comment",
       id: string,
+      createdAt: string,
       comment: string,
       userID: string,
       postID: string,
@@ -2100,7 +2116,6 @@ export type SyncCommentsQuery = {
         _deleted?: boolean | null,
         _lastChangedAt: number,
       } | null,
-      createdAt: string,
       updatedAt: string,
       _version: number,
       _deleted?: boolean | null,
@@ -2125,6 +2140,7 @@ export type CommentsByUserIDQuery = {
     items:  Array< {
       __typename: "Comment",
       id: string,
+      createdAt: string,
       comment: string,
       userID: string,
       postID: string,
@@ -2162,7 +2178,6 @@ export type CommentsByUserIDQuery = {
         _deleted?: boolean | null,
         _lastChangedAt: number,
       } | null,
-      createdAt: string,
       updatedAt: string,
       _version: number,
       _deleted?: boolean | null,
@@ -2175,6 +2190,7 @@ export type CommentsByUserIDQuery = {
 
 export type CommentsByPostQueryVariables = {
   postID: string,
+  createdAt?: ModelStringKeyConditionInput | null,
   sortDirection?: ModelSortDirection | null,
   filter?: ModelCommentFilterInput | null,
   limit?: number | null,
@@ -2187,6 +2203,7 @@ export type CommentsByPostQuery = {
     items:  Array< {
       __typename: "Comment",
       id: string,
+      createdAt: string,
       comment: string,
       userID: string,
       postID: string,
@@ -2224,7 +2241,6 @@ export type CommentsByPostQuery = {
         _deleted?: boolean | null,
         _lastChangedAt: number,
       } | null,
-      createdAt: string,
       updatedAt: string,
       _version: number,
       _deleted?: boolean | null,
@@ -2304,10 +2320,10 @@ export type GetPostQuery = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -2544,10 +2560,10 @@ export type GetUserQuery = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -3017,6 +3033,7 @@ export type OnCreateCommentSubscription = {
   onCreateComment?:  {
     __typename: "Comment",
     id: string,
+    createdAt: string,
     comment: string,
     userID: string,
     postID: string,
@@ -3097,7 +3114,6 @@ export type OnCreateCommentSubscription = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
     } | null,
-    createdAt: string,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -3113,6 +3129,7 @@ export type OnUpdateCommentSubscription = {
   onUpdateComment?:  {
     __typename: "Comment",
     id: string,
+    createdAt: string,
     comment: string,
     userID: string,
     postID: string,
@@ -3193,7 +3210,6 @@ export type OnUpdateCommentSubscription = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
     } | null,
-    createdAt: string,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -3209,6 +3225,7 @@ export type OnDeleteCommentSubscription = {
   onDeleteComment?:  {
     __typename: "Comment",
     id: string,
+    createdAt: string,
     comment: string,
     userID: string,
     postID: string,
@@ -3289,7 +3306,6 @@ export type OnDeleteCommentSubscription = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
     } | null,
-    createdAt: string,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -3366,10 +3382,10 @@ export type OnCreatePostSubscription = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -3455,10 +3471,10 @@ export type OnUpdatePostSubscription = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -3544,10 +3560,10 @@ export type OnDeletePostSubscription = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -3607,10 +3623,10 @@ export type OnCreateUserSubscription = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -3686,10 +3702,10 @@ export type OnUpdateUserSubscription = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
@@ -3765,10 +3781,10 @@ export type OnDeleteUserSubscription = {
       items:  Array< {
         __typename: "Comment",
         id: string,
+        createdAt: string,
         comment: string,
         userID: string,
         postID: string,
-        createdAt: string,
         updatedAt: string,
         _version: number,
         _deleted?: boolean | null,
