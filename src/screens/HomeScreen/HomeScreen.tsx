@@ -30,10 +30,6 @@ const HomeScreen = () => {
     },
   );
 
-  // console.warn("Data: ", data);
-  // console.warn("Loading: ", loading);
-  // console.warn("Error: ", error);
-
   if (loading) {
     return <ActivityIndicator />;
   }

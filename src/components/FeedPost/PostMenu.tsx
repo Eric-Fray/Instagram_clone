@@ -31,7 +31,6 @@ const PostMenu = ({post}: IPostMenu) => {
   const navigation = useNavigation<FeedNavigationProp>();
   const startDeletingPost = async () => {
     const response = await doDeletePost();
-    console.warn(response);
   };
   const onDeleteOptionPressed = () => {
     Alert.alert('Are you sure?', 'Deleting a post is permanent', [

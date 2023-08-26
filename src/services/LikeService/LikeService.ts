@@ -32,19 +32,21 @@ const useLikeService = (post: Post) => {
   const [doUpdatePost] = useMutation<
     UpdatePostMutation,
     UpdatePostMutationVariables
-  >(updatePost);
+  >(updatePost, {errorPolicy: 'all'});
   const [doCreateLike] = useMutation<
     CreateLikeMutation,
     CreateLikeMutationVariables
   >(createLike, {
     variables: {input: {userID: userId, postID: post.id}},
     refetchQueries: ['LikesForPostByUser'],
+    errorPolicy: 'all',
   });
 
   const [doDeleteLike] = useMutation<
     DeleteLikeMutation,
     DeleteLikeMutationVariables
-  >(deleteLike);
+  >(deleteLike, {errorPolicy: 'all'});
+
 
   const userLike = (usersLikeData?.likesForPostByUser?.items || []).filter(
     like => !like?._deleted,
