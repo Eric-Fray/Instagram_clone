@@ -91,8 +91,10 @@ export const schema = {
                     "type": "key",
                     "properties": {
                         "name": "byPost",
+                        "queryField": "likesForPostByUser",
                         "fields": [
-                            "postID"
+                            "postID",
+                            "userID"
                         ]
                     }
                 },
