@@ -7,16 +7,16 @@ import {
 import FeedPost from '../../../src/components/FeedPost/';
 import React, {useRef, useState} from 'react';
 import {useQuery} from '@apollo/client';
-import {listPosts} from './queries';
-import {ListPostsQuery, ListPostsQueryVariables} from '../../API';
+import {postsByDate} from './queries';
+import {ModelSortDirection, PostsByDateQuery, PostsByDateQueryVariables} from '../../API';
 import ApiErrorMessage from '../../components/ApiErrorMessage/ApiErrorMessage';
 
 const HomeScreen = () => {
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const {data, loading, error, refetch} = useQuery<
-    ListPostsQuery,
-    ListPostsQueryVariables
-  >(listPosts, {errorPolicy: 'all'});
+    PostsByDateQuery,
+    PostsByDateQueryVariables
+  >(postsByDate, {variables: {type: 'POST', sortDirection: ModelSortDirection.DESC}, errorPolicy: 'all'});
 
   const viewabilityConfig: ViewabilityConfig = {
     itemVisiblePercentThreshold: 51,
@@ -40,7 +40,9 @@ const HomeScreen = () => {
     );
   }
 
-  const posts = (data?.listPosts?.items || []).filter(post => !post?._deleted);
+  const posts = (data?.postsByDate?.items || []).filter(post => !post?._deleted);
+
+  console.warn(posts);
 
   return (
     <FlatList
