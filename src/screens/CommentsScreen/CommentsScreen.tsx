@@ -5,7 +5,7 @@ import Input from './Input';
 import {useRoute} from '@react-navigation/native';
 import {CommentsRouteProp} from '../../types/navigation';
 import {useQuery} from '@apollo/client';
-import {CommentsByPostQuery, CommentsByPostQueryVariables} from '../../API';
+import {CommentsByPostQuery, CommentsByPostQueryVariables, ModelSortDirection} from '../../API';
 import {commentsByPost} from './queries';
 import ApiErrorMessage from '../../components/ApiErrorMessage';
 
@@ -16,7 +16,7 @@ const CommentsScreen = () => {
   const {data, loading, error} = useQuery<
     CommentsByPostQuery,
     CommentsByPostQueryVariables
-  >(commentsByPost, {variables: {postID: postId}, errorPolicy: 'all'});
+  >(commentsByPost, {variables: {postID: postId, sortDirection: ModelSortDirection.DESC}, errorPolicy: 'all'});
 
   const comments = data?.commentsByPost?.items.filter(comment => !comment?._deleted)
 
@@ -38,6 +38,7 @@ const CommentsScreen = () => {
         data={comments}
         renderItem={({item}) => <Comment comment={item} includeDetails />}
         style={{padding: 10}}
+        inverted
         ListEmptyComponent={() => (
           <Text>No comments. Be the first comment.</Text>
         )}

@@ -4,7 +4,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import React, {useState} from 'react';
 import fonts from '../../theme/fonts';
 import {Comment as CommentType} from '../../API';
-import { DEFAULT_USER_IMAGE } from '../../config';
+import {DEFAULT_USER_IMAGE} from '../../config';
 
 interface ICommentProps {
   comment: CommentType;
@@ -14,6 +14,10 @@ interface ICommentProps {
 const Comment = ({comment, includeDetails = false}: ICommentProps) => {
   const [isLiked, setIsLiked] = useState(false);
 
+  const dayjs = require('dayjs');
+  const relativeTime = require('dayjs/plugin/relativeTime');
+  dayjs.extend(relativeTime);
+
   const toggleLike = () => {
     setIsLiked(v => !v);
   };
@@ -21,7 +25,10 @@ const Comment = ({comment, includeDetails = false}: ICommentProps) => {
   return (
     <View style={styles.comment}>
       {includeDetails && (
-        <Image source={{uri: comment.User?.image || DEFAULT_USER_IMAGE}} style={styles.avatar} />
+        <Image
+          source={{uri: comment.User?.image || DEFAULT_USER_IMAGE}}
+          style={styles.avatar}
+        />
       )}
       <View style={styles.middleColumn}>
         <Text style={styles.commentText}>
@@ -30,7 +37,9 @@ const Comment = ({comment, includeDetails = false}: ICommentProps) => {
         </Text>
         {includeDetails && (
           <View style={styles.footer}>
-            <Text style={styles.footerText}>2d</Text>
+            <Text style={styles.footerText}>
+              {dayjs(comment.createdAt).fromNow()}
+            </Text>
             <Text style={styles.footerText}>5 likes</Text>
             <Text style={styles.footerText}>Reply</Text>
           </View>
