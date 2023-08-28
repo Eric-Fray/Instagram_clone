@@ -54,7 +54,6 @@ const CreatePostScreen = () => {
           },
         },
       });
-      console.warn(response);
       navigation.popToTop();
       navigation.navigate('HomeStack');
     } catch (e) {

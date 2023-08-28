@@ -12,14 +12,26 @@ import {ModelSortDirection, PostsByDateQuery, PostsByDateQueryVariables} from '.
 import ApiErrorMessage from '../../components/ApiErrorMessage/ApiErrorMessage';
 
 const HomeScreen = () => {
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [activePostId, setActivePostId] = useState<string | null>(null);
-  const {data, loading, error, refetch} = useQuery<
+  const {data, loading, error, refetch, fetchMore} = useQuery<
     PostsByDateQuery,
     PostsByDateQueryVariables
-  >(postsByDate, {variables: {type: 'POST', sortDirection: ModelSortDirection.DESC}, errorPolicy: 'all'});
+  >(postsByDate, {variables: {type: 'POST', sortDirection: ModelSortDirection.DESC, limit: 1}, errorPolicy: 'all'});
 
   const viewabilityConfig: ViewabilityConfig = {
     itemVisiblePercentThreshold: 51,
+  };
+
+  const nextToken = data?.postsByDate?.nextToken;
+
+  const loadMore = async () => {
+    if (!nextToken || isFetchingMore){
+      return;
+    };
+    setIsFetchingMore(true);
+    await fetchMore({variables: {nextToken: nextToken}});
+    setIsFetchingMore(false);
   };
 
   const onViewableItemsChanged = useRef(
@@ -42,8 +54,6 @@ const HomeScreen = () => {
 
   const posts = (data?.postsByDate?.items || []).filter(post => !post?._deleted);
 
-  console.warn(posts);
-
   return (
     <FlatList
       data={posts}
@@ -55,6 +65,7 @@ const HomeScreen = () => {
       onViewableItemsChanged={onViewableItemsChanged.current}
       onRefresh={refetch}
       refreshing={loading}
+      onEndReached={loadMore}
     />
   );
 };
