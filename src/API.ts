@@ -2840,6 +2840,103 @@ export type UsersByUsernameQuery = {
   } | null,
 };
 
+export type OnCreateCommentByPostIdSubscriptionVariables = {
+  postID: string,
+};
+
+export type OnCreateCommentByPostIdSubscription = {
+  onCreateCommentByPostId?:  {
+    __typename: "Comment",
+    id: string,
+    createdAt: string,
+    comment: string,
+    userID: string,
+    postID: string,
+    User?:  {
+      __typename: "User",
+      id: string,
+      name: string,
+      email: string,
+      username?: string | null,
+      bio?: string | null,
+      website?: string | null,
+      nofPosts: number,
+      nofFollowers: number,
+      nofFollowings: number,
+      image?: string | null,
+      Posts?:  {
+        __typename: "ModelPostConnection",
+        nextToken?: string | null,
+        startedAt?: number | null,
+      } | null,
+      Comments?:  {
+        __typename: "ModelCommentConnection",
+        nextToken?: string | null,
+        startedAt?: number | null,
+      } | null,
+      Likes?:  {
+        __typename: "ModelLikeConnection",
+        nextToken?: string | null,
+        startedAt?: number | null,
+      } | null,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null,
+    Post?:  {
+      __typename: "Post",
+      id: string,
+      createdAt: string,
+      type: string,
+      description?: string | null,
+      image?: string | null,
+      images?: Array< string > | null,
+      video?: string | null,
+      nofComments: number,
+      nofLikes: number,
+      userID: string,
+      User?:  {
+        __typename: "User",
+        id: string,
+        name: string,
+        email: string,
+        username?: string | null,
+        bio?: string | null,
+        website?: string | null,
+        nofPosts: number,
+        nofFollowers: number,
+        nofFollowings: number,
+        image?: string | null,
+        createdAt: string,
+        updatedAt: string,
+        _version: number,
+        _deleted?: boolean | null,
+        _lastChangedAt: number,
+      } | null,
+      Likes?:  {
+        __typename: "ModelLikeConnection",
+        nextToken?: string | null,
+        startedAt?: number | null,
+      } | null,
+      Comments?:  {
+        __typename: "ModelCommentConnection",
+        nextToken?: string | null,
+        startedAt?: number | null,
+      } | null,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
 export type OnCreateLikeSubscriptionVariables = {
   filter?: ModelSubscriptionLikeFilterInput | null,
 };

@@ -1,25 +1,24 @@
-import {useMutation} from '@apollo/client';
+import {useMutation, useQuery} from '@apollo/client';
 import {Alert} from 'react-native';
-import {useQuery} from '@apollo/client';
 import {
   CreateCommentMutation,
   CreateCommentMutationVariables,
   GetPostQuery,
   GetPostQueryVariables,
+  Post,
   UpdatePostMutation,
   UpdatePostMutationVariables,
 } from '../../API';
-import {useAuthContext} from '../../Contexts/AuthContext';
-import {updatePost, createComment, getPost} from './queries';
+import {useAuthContext} from '../../contexts/AuthContext';
+import {createComment, updatePost, getPost} from './queries';
 
 const useCommentsService = (postId: string) => {
   const {userId} = useAuthContext();
 
   const {data: postData} = useQuery<GetPostQuery, GetPostQueryVariables>(
     getPost,
-    {errorPolicy: 'all', variables: {id: postId}},
+    {variables: {id: postId}, errorPolicy: 'all'},
   );
-
   const post = postData?.getPost;
 
   const [doUpdatePost] = useMutation<
@@ -30,7 +29,7 @@ const useCommentsService = (postId: string) => {
   const [doCreateComment] = useMutation<
     CreateCommentMutation,
     CreateCommentMutationVariables
-  >(createComment, {errorPolicy: 'all', refetchQueries: ['CommentsByPost']});
+  >(createComment, {errorPolicy: 'all'});
 
   const incrementNofComments = (amount: 1 | -1) => {
     if (!post) {
@@ -66,7 +65,7 @@ const useCommentsService = (postId: string) => {
       });
       incrementNofComments(1);
     } catch (e) {
-      Alert.alert('Error submitting the comment');
+      Alert.alert('Error submitting the comment', (e as Error).message);
     }
   };
 

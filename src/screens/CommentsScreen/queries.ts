@@ -25,31 +25,8 @@ export const commentsByPost = gql`
         User {
           id
           name
-          email
           username
-          bio
-          website
-          nofPosts
-          nofFollowers
-          nofFollowings
           image
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        Post {
-          id
-          description
-          image
-          images
-          video
-          nofComments
-          nofLikes
-          userID
-          createdAt
-          updatedAt
           _version
           _deleted
           _lastChangedAt

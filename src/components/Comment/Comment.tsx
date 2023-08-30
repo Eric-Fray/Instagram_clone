@@ -9,9 +9,14 @@ import {DEFAULT_USER_IMAGE} from '../../config';
 interface ICommentProps {
   comment: CommentType;
   includeDetails?: boolean;
+  isNew?: boolean;
 }
 
-const Comment = ({comment, includeDetails = false}: ICommentProps) => {
+const Comment = ({
+  comment,
+  includeDetails = false,
+  isNew = false,
+}: ICommentProps) => {
   const [isLiked, setIsLiked] = useState(false);
 
   const dayjs = require('dayjs');
@@ -37,6 +42,7 @@ const Comment = ({comment, includeDetails = false}: ICommentProps) => {
         </Text>
         {includeDetails && (
           <View style={styles.footer}>
+            {isNew && <Text style={styles.new}>New!</Text>}
             <Text style={styles.footerText}>
               {dayjs(comment.createdAt).fromNow()}
             </Text>
@@ -88,6 +94,14 @@ const styles = StyleSheet.create({
   footerText: {
     marginRight: 10,
   },
+  new: {
+    backgroundColor: colors.primary,
+    color: colors.white,
+    paddingHorizontal: 5,
+    marginRight: 5,
+    borderRadius: 5,
+    overflow: 'hidden',
+  }
 });
 
 export default Comment;

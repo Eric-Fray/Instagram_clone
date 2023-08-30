@@ -1,21 +1,26 @@
-import {View, FlatList, ActivityIndicator, Text} from 'react-native';
-import Comment from '../../components/Comment';
-import React, { useState } from 'react';
-import Input from './Input';
+import {useQuery, useSubscription} from '@apollo/client';
 import {useRoute} from '@react-navigation/native';
-import {CommentsRouteProp} from '../../types/navigation';
-import {useQuery} from '@apollo/client';
+import React, {useEffect, useState} from 'react';
+import {View, Text, FlatList, ActivityIndicator} from 'react-native';
 import {
+  Comment as CommentType,
   CommentsByPostQuery,
   CommentsByPostQueryVariables,
   ModelSortDirection,
+  OnCreateCommentByPostIdSubscription,
+  OnCreateCommentByPostIdSubscriptionVariables,
+  OnCreateCommentSubscription,
 } from '../../API';
-import {commentsByPost} from './queries';
 import ApiErrorMessage from '../../components/ApiErrorMessage';
+import Comment from '../../components/Comment';
+import {CommentsRouteProp} from '../../types/navigation';
+import Input from './Input';
+import {commentsByPost, onCreateCommentByPostId} from './queries';
 
 const CommentsScreen = () => {
   const route = useRoute<CommentsRouteProp>();
   const {postId} = route.params;
+  const [newComments, setNewComments] = useState<CommentType[]>([]);
 
   const {data, loading, error, fetchMore} = useQuery<
     CommentsByPostQuery,
@@ -24,26 +29,41 @@ const CommentsScreen = () => {
     variables: {
       postID: postId,
       sortDirection: ModelSortDirection.DESC,
-      limit: 10,
+      limit: 20,
     },
-    errorPolicy: 'all',
   });
+  const {data: newCommentsData} = useSubscription<
+    OnCreateCommentByPostIdSubscription,
+    OnCreateCommentByPostIdSubscriptionVariables
+  >(onCreateCommentByPostId, {variables: {postID: postId}});
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  const comments = data?.commentsByPost?.items.filter(
-    comment => !comment?._deleted,
-  );
-
+  const comments =
+    data?.commentsByPost?.items.filter(comment => !comment?._deleted) || [];
   const nextToken = data?.commentsByPost?.nextToken;
 
+  useEffect(() => {
+    if (newCommentsData?.onCreateCommentByPostId) {
+      setNewComments(existingNewComments => [
+        newCommentsData.onCreateCommentByPostId as CommentType,
+        ...existingNewComments,
+      ]);
+    }
+  }, [newCommentsData]);
+
   const loadMore = async () => {
+    console.log('loading more posts');
     if (!nextToken || isFetchingMore) {
       return;
     }
     setIsFetchingMore(true);
     await fetchMore({variables: {nextToken}});
     setIsFetchingMore(false);
+  };
+
+  const isNewComment = (comment: CommentType) => {
+    return newComments.some(c => c.id === comment.id);
   };
 
   if (loading) {
@@ -61,12 +81,16 @@ const CommentsScreen = () => {
   return (
     <View style={{flex: 1}}>
       <FlatList
-        data={comments}
-        renderItem={({item}) => <Comment comment={item} includeDetails />}
+        data={[...newComments, ...comments]}
+        renderItem={({item}) =>
+          item && (
+            <Comment comment={item} includeDetails isNew={isNewComment(item)} />
+          )
+        }
         style={{padding: 10}}
         inverted
         ListEmptyComponent={() => (
-          <Text>No comments. Be the first comment.</Text>
+          <Text>No comments. Be the first comment</Text>
         )}
         onEndReached={() => loadMore()}
       />

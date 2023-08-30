@@ -1,5 +1,19 @@
 import {gql} from '@apollo/client';
 
+export const getPost = gql`
+  query GetPost($id: ID!) {
+    getPost(id: $id) {
+      id
+      nofComments
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+
 export const updatePost = gql`
   mutation UpdatePost(
     $input: UpdatePostInput!
@@ -36,20 +50,12 @@ export const createComment = gql`
         _deleted
         _lastChangedAt
       }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-
-export const getPost = gql`
-query GetPost($id: ID!) {
-    getPost(id: $id) {
-      id
-      nofComments
+      User {
+        id
+        image
+        username
+        name
+      }
       createdAt
       updatedAt
       _version
