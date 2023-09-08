@@ -8,6 +8,7 @@ import React, {
 import {CognitoUser} from 'amazon-cognito-identity-js';
 import {Auth, Hub} from 'aws-amplify';
 import {HubCallback} from '@aws-amplify/core';
+import { onError } from "@apollo/client/link/error";
 
 type UserType = CognitoUser | null | undefined;
 type AuthContextType = {

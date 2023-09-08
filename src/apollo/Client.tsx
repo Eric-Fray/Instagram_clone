@@ -7,6 +7,7 @@ import {
   createHttpLink,
   TypePolicies,
 } from '@apollo/client';
+import { onError } from "@apollo/client/link/error";
 import {createAuthLink, AuthOptions, AUTH_TYPE} from 'aws-appsync-auth-link';
 import {createSubscriptionHandshakeLink} from 'aws-appsync-subscription-link';
 import config from '../aws-exports';
@@ -22,21 +23,30 @@ const auth: AuthOptions = {
   apiKey: config.aws_appsync_apiKey,
 };
 
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors)
+    graphQLErrors.forEach(({ message, locations, path }) =>
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+      )
+    );
+  if (networkError) console.log(`[Network error]: ${networkError}`);
+});
+
 const httpLink = createHttpLink({uri: url});
 const link = ApolloLink.from([
+  errorLink,
   createAuthLink({url, region, auth}),
   createSubscriptionHandshakeLink({url, region, auth}, httpLink),
 ]);
 
-const mergeLists = (existing = {items: []}, incoming = {items: []}) => {
+export const mergeLists = (existing = {items: []}, incoming = {items: []}) => {
   return {
     ...existing,
     ...incoming,
     items: [...(existing.items || []), ...incoming.items],
   };
 };
-
-
 
 const typePolicies: TypePolicies = {
   Query: {

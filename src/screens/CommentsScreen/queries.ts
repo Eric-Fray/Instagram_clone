@@ -73,3 +73,34 @@ export const onCreateCommentByPostId = gql`
     }
   }
 `;
+
+export const onCreateComment = gql`
+  subscription OnCreateComment($filter: ModelSubscriptionCommentFilterInput) {
+    onCreateComment(filter: $filter) {
+      id
+      comment
+      userID
+      postID
+      Post {
+        id
+        nofComments
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      User {
+        id
+        image
+        username
+        name
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;

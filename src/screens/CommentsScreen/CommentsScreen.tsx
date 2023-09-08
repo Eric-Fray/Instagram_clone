@@ -1,5 +1,5 @@
 import {useQuery, useSubscription} from '@apollo/client';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {View, Text, FlatList, ActivityIndicator} from 'react-native';
 import {
@@ -9,13 +9,12 @@ import {
   ModelSortDirection,
   OnCreateCommentByPostIdSubscription,
   OnCreateCommentByPostIdSubscriptionVariables,
-  OnCreateCommentSubscription,
 } from '../../API';
 import ApiErrorMessage from '../../components/ApiErrorMessage';
 import Comment from '../../components/Comment';
 import {CommentsRouteProp} from '../../types/navigation';
 import Input from './Input';
-import {commentsByPost, onCreateCommentByPostId} from './queries';
+import {commentsByPost, onCreateComment, onCreateCommentByPostId} from './queries';
 
 const CommentsScreen = () => {
   const route = useRoute<CommentsRouteProp>();

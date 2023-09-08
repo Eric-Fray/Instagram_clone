@@ -9,7 +9,7 @@ import {
   UpdatePostMutation,
   UpdatePostMutationVariables,
 } from '../../API';
-import {useAuthContext} from '../../contexts/AuthContext';
+import {useAuthContext} from '../../Contexts/AuthContext';
 import {createComment, updatePost, getPost} from './queries';
 
 const useCommentsService = (postId: string) => {
