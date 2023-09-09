@@ -5,17 +5,20 @@ import {CreateNavigationProp, CreateRouteProp} from '../../types/navigation';
 import colors from '../../theme/colors';
 import Button from '../../components/Button';
 import {createPost} from './queries';
-import {CreatePostMutation, CreatePostMutationVariables} from '../../API';
+import {CreatePostInput, CreatePostMutation, CreatePostMutationVariables} from '../../API';
 import {useMutation} from '@apollo/client';
 import {useAuthContext} from '../../Contexts/AuthContext';
 import Carousel from '../../components/Carousel/Carousel';
 import VideoPlayer from '../../components/VideoPlayer';
+import {Storage} from 'aws-amplify';
+import {v4 as uuidv4} from 'uuid';
 
 const CreatePostScreen = () => {
   const route = useRoute<CreateRouteProp>();
   const {image, images, video} = route.params;
   const [description, setDescription] = useState('');
   const {userId} = useAuthContext();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigation = useNavigation<CreateNavigationProp>();
   const [doCreatePost] = useMutation<
     CreatePostMutation,
@@ -31,6 +34,7 @@ const CreatePostScreen = () => {
           uri: image,
         }}
         style={styles.image}
+        resizeMode={'contain'}
       />
     );
   } else if (images) {
@@ -39,27 +43,55 @@ const CreatePostScreen = () => {
     content = <VideoPlayer uri={video} />;
   }
   const submit = async () => {
+    if (isSubmitting){ 
+      return;
+    }
+    setIsSubmitting(true);
+    const input: CreatePostInput = {
+      type: 'POST',
+      description,
+      image: undefined,
+      images: undefined,
+      video: undefined,
+      nofComments: 0,
+      nofLikes: 0,
+      userID: userId,
+    };
+
+    if (image) {
+    const imageKey = await uploadMedia(image);
+    input.image = imageKey;
+    } else if (images) {
+      const imageKeys = await Promise.all(images.map(img => uploadMedia(img)));
+      input.images = imageKeys.filter(key => key) as string[];
+    }
+
     try {
-      const response = await doCreatePost({
-        variables: {
-          input: {
-            type: 'POST',
-            description,
-            image: image,
-            images: images,
-            video: video,
-            nofComments: 0,
-            nofLikes: 0,
-            userID: userId,
-          },
-        },
-      });
+      await doCreatePost({variables: {input}});
+      setIsSubmitting(false);
       navigation.popToTop();
       navigation.navigate('HomeStack');
     } catch (e) {
-      Alert.alert('Error uploading post', (e as Error).message);
+      setIsSubmitting(false);
+      Alert.alert('Error uploading post: ', (e as Error).message);
+      console.warn((e as Error).message);
     }
   };
+
+  const uploadMedia = async (uri: string) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const uriParts = uri.split('.');
+      const extension = uriParts[uriParts.length - 1];
+
+      const s3Response = await Storage.put(`${uuidv4()}.${extension}`, blob);
+      return s3Response.key;
+    } catch (e) {
+      Alert.alert('Error during the upload: ', (e as Error).message);
+    }
+  };
+
   return (
     <View style={styles.root}>
       <View style={styles.content}>{content}</View>
@@ -73,7 +105,7 @@ const CreatePostScreen = () => {
         numberOfLines={5}
       />
 
-      <Button text="Submit" onPress={submit} />
+      <Button text={isSubmitting ? 'Submitting...': 'Submit'} onPress={submit} />
     </View>
   );
 };
@@ -83,8 +115,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: '100%',
+    aspectRatio: 1,
   },
   input: {
     marginVertical: 10,

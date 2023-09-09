@@ -15,6 +15,7 @@ import {Post} from '../../API';
 import {DEFAULT_USER_IMAGE} from '../../config';
 import PostMenu from './PostMenu';
 import useLikeService from '../../services/LikeService';
+import Content from './Content';
 
 interface IFeedPost {
   post: Post;
@@ -49,28 +50,6 @@ const FeedPost = (props: IFeedPost) => {
     //setIsDescriptionExpanded(!isDescriptionExpanded);
   };
 
-  let content;
-  if (post.image) {
-    content = (
-      <DoublePressable onDoublePress={toggleLike}>
-        <Image
-          source={{
-            uri: post.image,
-          }}
-          style={styles.image}
-        />
-      </DoublePressable>
-    );
-  } else if (post.images) {
-    content = <Carousel images={post.images} onDoublePress={toggleLike} />;
-  } else if (post.video) {
-    content = (
-      <DoublePressable onDoublePress={toggleLike}>
-        <VideoPlayer uri={post.video} paused={!isVisible} />
-      </DoublePressable>
-    );
-  }
-
   return (
     <View style={styles.post}>
       {/* Header */}
@@ -88,7 +67,9 @@ const FeedPost = (props: IFeedPost) => {
       </View>
 
       {/* Content */}
-      {content}
+       <DoublePressable onDoublePress={toggleLike}>
+          <Content post={post} isVisible={isVisible}/>
+       </DoublePressable>
 
       {/* Footer */}
       <View style={styles.footer}>

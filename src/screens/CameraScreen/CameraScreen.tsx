@@ -1,4 +1,5 @@
-import {View, Text, StyleSheet, Pressable} from 'react-native';
+import {View, StyleSheet, Pressable} from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 import React, {useRef, useState} from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -7,11 +8,12 @@ import {
   FlashMode,
   CameraRecordingOptions,
   CameraPictureOptions,
-  VideoQuality,
 } from 'expo-camera';
 import colors from '../../theme/colors';
 import {useNavigation} from '@react-navigation/native';
 import {CameraNavigationProp} from '../../types/navigation';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const flashModes = [
   FlashMode.off,
@@ -32,6 +34,8 @@ const CameraScreen = () => {
   const [flash, setFlash] = useState(FlashMode.off);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+
+  const inset = useSafeAreaInsets();
 
   const camera = useRef<Camera>(null);
   const navigation = useNavigation<CameraNavigationProp>();
@@ -86,6 +90,9 @@ const CameraScreen = () => {
     };
 
     const result = await camera.current.takePictureAsync(options);
+    navigation.navigate('Create', {
+      image: result.uri,
+    });
   };
 
   const startRecording = async () => {
@@ -125,8 +132,27 @@ const CameraScreen = () => {
     });
   };
 
+  const openImageGallery = () => {
+    launchImageLibrary(
+      {mediaType: 'photo', selectionLimit: 3},
+      ({didCancel, errorCode, assets}) => {
+        if (!didCancel && !errorCode && assets && assets.length > 0) {
+          if (assets.length === 1) {
+            navigation.navigate('Create', {
+              image: assets[0].uri,
+            });
+          } else if (assets.length > 1) {
+            navigation.navigate('Create', {
+              images: assets.map(asset => asset.uri as string),
+            })
+          }
+        }
+      },
+    );
+  };
+
   return (
-    <View style={styles.page}>
+    <KeyboardAwareScrollView contentContainerStyle={styles.page}>
       <Camera
         ref={camera}
         style={styles.camera}
@@ -136,7 +162,7 @@ const CameraScreen = () => {
         onCameraReady={() => setIsCameraReady(true)}
       />
 
-      <View style={[styles.buttonsContainer, {top: 10}]}>
+      <View style={[styles.buttonsContainer, {top: inset.top + 25}]}>
         <MaterialIcons name="close" size={30} color={colors.white} />
         <MaterialIcons
           onPress={flipFlash}
@@ -147,7 +173,12 @@ const CameraScreen = () => {
         <MaterialIcons name="settings" size={30} color={colors.white} />
       </View>
       <View style={[styles.buttonsContainer, {bottom: 1}]}>
-        <MaterialIcons name="photo-library" size={30} color={colors.white} />
+        <MaterialIcons
+          onPress={openImageGallery}
+          name="photo-library"
+          size={30}
+          color={colors.white}
+        />
         {isCameraReady && (
           <Pressable
             onPress={takePicture}
@@ -174,7 +205,7 @@ const CameraScreen = () => {
           color={colors.white}
         />
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 
