@@ -11,8 +11,6 @@ import config from './src/aws-exports';
 import AuthContextProvider from './src/Contexts/AuthContext';
 import Client from './src/apollo/Client';
 import {MenuProvider} from 'react-native-popup-menu';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import * as dayjs from 'dayjs'; 
 
 const updatedConfig = {
   ...config,
