@@ -7,6 +7,7 @@ import {
   DeleteUserMutationVariables,
   GetUserQuery,
   GetUserQueryVariables,
+  UpdateUserInput,
   UpdateUserMutation,
   UpdateUserMutationVariables,
   UsersByUsernameQuery,
@@ -17,10 +18,11 @@ import {useQuery, useMutation, useLazyQuery} from '@apollo/client';
 import {useAuthContext} from '../../Contexts/AuthContext';
 import ApiErrorMessage from '../../components/ApiErrorMessage';
 import {useNavigation} from '@react-navigation/native';
-import {Auth} from 'aws-amplify';
+import {Auth, Storage} from 'aws-amplify';
 import styles from './styles';
 import CustomInput, {IEditableUser} from './CustomInput';
 import {DEFAULT_USER_IMAGE} from '../../config';
+import {v4 as uuidv4} from 'uuid';
 
 const URL_REGEX =
   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
@@ -43,12 +45,10 @@ const EditProfileScreen = () => {
     UsersByUsernameQueryVariables
   >(usersByUsername, {errorPolicy: 'all'});
 
-  const [
-    doUpdateUser,
-    {loading: updateLoading, error: updateError},
-  ] = useMutation<UpdateUserMutation, UpdateUserMutationVariables>(updateUser, {
-    errorPolicy: 'all',
-  });
+  const [doUpdateUser, {loading: updateLoading, error: updateError}] =
+    useMutation<UpdateUserMutation, UpdateUserMutationVariables>(updateUser, {
+      errorPolicy: 'all',
+    });
 
   const [doDelete, {loading: deleteLoading, error: deleteError}] = useMutation<
     DeleteUserMutation,
@@ -65,11 +65,34 @@ const EditProfileScreen = () => {
   }, [user, setValue]);
 
   const onSubmit = async (formData: IEditableUser) => {
+    const input: UpdateUserInput = {
+      id: userId,
+      ...formData,
+      _version: user?._version,
+    };
+    if (selectedPhoto?.uri) {
+      input.image = await uploadMedia(selectedPhoto.uri);
+    }
+
     await doUpdateUser({
-      variables: {input: {id: userId, ...formData, _version: user?._version}},
+      variables: {input},
     });
-    if (navigation.canGoBack()){
-    navigation.goBack();
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
+  };
+
+  const uploadMedia = async (uri: string) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const uriParts = uri.split('.');
+      const extension = uriParts[uriParts.length - 1];
+
+      const s3Response = await Storage.put(`${uuidv4()}.${extension}`, blob);
+      return s3Response.key;
+    } catch (e) {
+      Alert.alert('Error during the upload: ', (e as Error).message);
     }
   };
 
@@ -118,16 +141,16 @@ const EditProfileScreen = () => {
   const validateUsername = async (username: string) => {
     // query the database based on usersByUsername
     try {
-    const response = await getUsersByUsername({variables: {username}});
-    if (response.error) {
-      Alert.alert('Query to verify username failed');
-      return 'Failed to verify username'
-    }
-    const users = response.data?.usersByUsername?.items;
-    if (users && users?.length > 0 && users?.[0]?.id !== userId) {
-      return 'Username is already taken';
-    }
-    } catch(e) {
+      const response = await getUsersByUsername({variables: {username}});
+      if (response.error) {
+        Alert.alert('Query to verify username failed');
+        return 'Failed to verify username';
+      }
+      const users = response.data?.usersByUsername?.items;
+      if (users && users?.length > 0 && users?.[0]?.id !== userId) {
+        return 'Username is already taken';
+      }
+    } catch (e) {
       Alert.alert('Query to verify username failed');
     }
     // if username isn't taken, return true

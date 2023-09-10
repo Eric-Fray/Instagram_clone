@@ -1,31 +1,37 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, Text, View} from 'react-native';
 
 import styles from './styles';
 import Button from '../../components/Button';
 import {useNavigation} from '@react-navigation/native';
 import {ProfileNavigationProp} from '../../types/navigation';
-import {Auth} from 'aws-amplify';
+import {Auth, Storage} from 'aws-amplify';
 import {User} from '../../API';
 import {DEFAULT_USER_IMAGE} from '../../config';
 import {useAuthContext} from '../../Contexts/AuthContext';
+import UserImage from '../../components/UserImage';
 
 interface IProfileHeader {
   user: User;
 }
 
 const ProfileHeader = ({user}: IProfileHeader) => {
+  const [imageUri, setImageUri] = useState<string | null>(null);
   const {userId} = useAuthContext();
   const navigation = useNavigation<ProfileNavigationProp>();
 
-  navigation.setOptions({title: user?.username || 'Profile'})
+  useEffect(() => {
+    if (user.image) {
+      Storage.get(user.image).then(setImageUri);
+    }
+  }, [user]);
+
+  navigation.setOptions({title: user?.username || 'Profile'});
   return (
     <View style={styles.root}>
       <View style={styles.headerRow}>
         {/* Profile Image */}
-        <Image
-          source={{uri: user.image || DEFAULT_USER_IMAGE}}
-          style={styles.avatar}
+        <UserImage imageKey={user.image || undefined} width={100}
         />
 
         {/* Posts, followers, following */}
