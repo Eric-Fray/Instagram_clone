@@ -15,6 +15,7 @@ interface IContent {
 const Content = ({post, isVisible}: IContent) => {
     const [imageUri, setImageUri] = useState<string| null>(null);
     const [imagesUri, setImagesUri] = useState<string[] | null>(null);
+    const [videoUri, setVideoUri] = useState<string | null>(null);
 
     useEffect(() => {
         downloadMedia();
@@ -27,6 +28,9 @@ const Content = ({post, isVisible}: IContent) => {
         } else if (post.images) {
             const uris = await Promise.all(post.images.map(img => Storage.get(img)));
             setImagesUri(uris);
+        } else if (post.video) {
+            const uri = await Storage.get(post.video);
+            setVideoUri(uri);
         }
     }
 
@@ -41,8 +45,8 @@ const Content = ({post, isVisible}: IContent) => {
         );
       } else if (imagesUri) {
         return <Carousel images={imagesUri} />;
-      } else if (post.video) {
-        return <VideoPlayer uri={post.video} paused={!isVisible} />;
+      } else if (videoUri) {
+        return <VideoPlayer uri={videoUri} paused={!isVisible} />;
       }
   return (
     <View>

@@ -13,7 +13,7 @@ import colors from '../../theme/colors';
 import {useNavigation} from '@react-navigation/native';
 import {CameraNavigationProp} from '../../types/navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const flashModes = [
   FlashMode.off,
@@ -109,6 +109,10 @@ const CameraScreen = () => {
     setIsRecording(true);
     try {
       const result = await camera.current.recordAsync(options);
+
+      navigation.navigate('Create', {
+        image: result.uri,
+      });
     } catch (e) {
       console.log(e);
     }
@@ -134,18 +138,21 @@ const CameraScreen = () => {
 
   const openImageGallery = () => {
     launchImageLibrary(
-      {mediaType: 'photo', selectionLimit: 3},
+      {mediaType: 'mixed', selectionLimit: 3},
       ({didCancel, errorCode, assets}) => {
         if (!didCancel && !errorCode && assets && assets.length > 0) {
+          const params: {image?: string; images?: string[]; video?: string} =
+            {};
           if (assets.length === 1) {
-            navigation.navigate('Create', {
-              image: assets[0].uri,
-            });
+            const field = assets[0].type?.startsWith('video') 
+            ? 'video' 
+            : 'image';
+            params[field] = assets[0].uri;
           } else if (assets.length > 1) {
-            navigation.navigate('Create', {
-              images: assets.map(asset => asset.uri as string),
-            })
+            params.images = assets.map(asset => asset.uri) as string[];
           }
+
+          navigation.navigate('Create', params);
         }
       },
     );
