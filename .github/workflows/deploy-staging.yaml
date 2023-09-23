@@ -20,7 +20,7 @@ jobs:
       - name: Setup Expo and EAS
         uses: expo/expo-github-action@v7
         with:
-          expo-packager: npm
+          packager: npm
           expo-version: 5.x
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN}}
