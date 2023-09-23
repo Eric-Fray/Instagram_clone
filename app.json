@@ -1,4 +1,11 @@
 {
-  "name": "notJust Photos",
-  "displayName": "notJust Photos"
+  "name": "notjust photos",
+  "displayName": "notjust photos",
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "5bbd2e3f-87c3-4e5e-b952-87fef79c2186"
+      }
+    }
+  }
 }
