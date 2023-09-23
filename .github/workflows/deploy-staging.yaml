@@ -19,11 +19,12 @@ jobs:
           cache: npm
       - name: Setup Expo and EAS
         uses: expo/expo-github-action@v7
-        expo-packager: npm
         with:
+          expo-packager: npm
           expo-version: 5.x
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN}}
+          expo-cache: true
       - name: Install Dependencies
         run: npm ci
       - name: Build on EAS
