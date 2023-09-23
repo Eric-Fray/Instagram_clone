@@ -28,4 +28,4 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Build on EAS
-        run: eas build --profile preview --platform android --non-interactive
+        run: eas build --profile preview --platform ios --non-interactive
